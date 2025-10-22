@@ -20,7 +20,7 @@ const Home: React.FC<HomeProps> = () => {
     <div className="min-h-screen bg-gradient-to-br from-teal-300 to-emerald-400 flex items-center justify-center px-4">
       <div className="bg-white shadow-xl rounded-2xl p-8 text-center max-w-md w-full">
         <h1 className="text-4xl font-extrabold text-gray-800 mb-2">
-          Welcome to MasterPass 🎟️
+          Welcome to MasterPass
         </h1>
         <p className="text-gray-600 mb-6">
           Your ticket to join the next-gen Web3 event. Connect, explore, and get inspired!
