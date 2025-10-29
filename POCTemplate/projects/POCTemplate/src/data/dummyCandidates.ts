@@ -63,7 +63,7 @@ export const dummyCandidates = [
           issuer: "Tech Solutions Ltd.",
           credentialType: "EmploymentCredential",
           employeeName: "John Smith",
-          employeeId: "EMP999999",
+          employeeId: "INT452376",
           role: "Intern Developer",
           startDate: "2020-05-01",
           endDate: "2020-08-31",
