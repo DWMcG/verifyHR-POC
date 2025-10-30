@@ -1,6 +1,6 @@
 export const dummyCandidates = [
   {
-    assetID: 12345678,
+    assetId: 12345678,
     name: "John Smith",
     credentials: {
       education: [
@@ -79,7 +79,7 @@ export const dummyCandidates = [
     },
   },
   {
-    assetID: 87654321,
+    assetId: 87654321,
     name: "Alice Johnson",
     credentials: {
       education: [

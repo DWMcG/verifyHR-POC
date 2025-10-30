@@ -9,10 +9,13 @@ import EmploymentForm from './components/credentials/EmploymentForm'
 import EducationForm from './components/credentials/EducationForm'
 import VerifyNFT from './components/VerifyNFT'
 import VerifyIDManager from './components/VerifyIDManager'
+import { dummyCandidates } from './data/dummyCandidates'
 
 interface HomeProps {}
 
 const Home: React.FC<HomeProps> = () => {
+  const [assetIdInput, setAssetIdInput] = useState('')   // 🟢 store the value of the assetID input
+  const [selectedCandidate, setSelectedCandidate] = useState<any | null>(null) // 🟢 store the candidate to display
   const [openWalletModal, setOpenWalletModal] = useState(false)
   const [openPaymentModal, setOpenPaymentModal] = useState(false)
   const [openTokenModal, setOpenTokenModal] = useState(false)
@@ -212,14 +215,28 @@ const Home: React.FC<HomeProps> = () => {
                 type="text"
                 placeholder="Enter or view Asset ID"
                 className="border border-gray-300 rounded-lg px-3 py-2 w-full mb-4"
+                value={assetIdInput}                        // 🟢 bind to state
+                onChange={(e) => setAssetIdInput(e.target.value)} // 🟢 update state when user types
               />
 
               <button
                 className="w-full py-2 rounded-lg text-[#1C2D5A] border border-[#1C2D5A] bg-white"
-                onClick={() => setOpenCareerPassportModal(true)}
+                onClick={() => {
+                  const candidate = dummyCandidates.find(
+                    (c) => c.assetId === Number(assetIdInput.trim())
+                  )
+
+                  if (candidate) {
+                    setSelectedCandidate(candidate)
+                    setOpenCareerPassportModal(true)
+                  } else {
+                    alert('Please enter a valid Asset ID for an existing candidate.')
+                  }
+                }}
               >
                 access career passport
               </button>
+
             </div>
 
             {/* ISSUE CARD */}
