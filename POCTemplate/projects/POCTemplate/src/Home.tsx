@@ -16,6 +16,18 @@ interface HomeProps {}
 const Home: React.FC<HomeProps> = () => {
   const [assetIdInput, setAssetIdInput] = useState('')   // 🟢 store the value of the assetID input
   const [selectedCandidate, setSelectedCandidate] = useState<any | null>(null) // 🟢 store the candidate to display
+  const employmentCredentials = selectedCandidate?.employment
+    ? [...selectedCandidate.employment].sort(
+        (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+      )
+    : [];
+
+  const educationCredentials = selectedCandidate?.education
+    ? [...selectedCandidate.education].sort(
+        (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+      )
+    : [];
+
   const [openWalletModal, setOpenWalletModal] = useState(false)
   const [openPaymentModal, setOpenPaymentModal] = useState(false)
   const [openTokenModal, setOpenTokenModal] = useState(false)
@@ -322,8 +334,35 @@ const Home: React.FC<HomeProps> = () => {
 
             {/* 🟢 Content frame */}
             <div className="border border-gray-300 rounded-lg p-4 h-96 overflow-auto bg-white">
-              {/* TODO: Display candidate career passport content here */}
-              <p className="text-gray-500 text-center mt-20">Career passport content will appear here.</p>
+              {/* Employment Credentials */}
+              <h4 className="font-semibold mb-2">Employment Credentials</h4>
+              {employmentCredentials.length > 0 ? (
+                employmentCredentials.map((cred, idx) => (
+                  <div key={idx} className="border-b border-gray-200 py-2">
+                    <div className="text-gray-800 font-medium">{cred.role}</div>
+                    <div className="text-gray-500 text-sm">
+                      {cred.company} • {cred.startDate} - {cred.endDate}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-center mb-4">No employment records found.</p>
+              )}
+
+              {/* Education Credentials */}
+              <h4 className="font-semibold mt-4 mb-2">Education Credentials</h4>
+              {educationCredentials.length > 0 ? (
+                educationCredentials.map((cred, idx) => (
+                  <div key={idx} className="border-b border-gray-200 py-2">
+                    <div className="text-gray-800 font-medium">{cred.degree}</div>
+                    <div className="text-gray-500 text-sm">
+                      {cred.institution} • {cred.startDate} - {cred.endDate}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-center">No education records found.</p>
+              )}
             </div>
 
             <div className="modal-action mt-4">
