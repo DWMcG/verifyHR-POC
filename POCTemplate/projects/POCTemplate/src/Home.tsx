@@ -225,17 +225,14 @@ const Home: React.FC<HomeProps> = () => {
               <p className="text-gray-600 mb-6">View or amend credential records.</p>
 
               {/* 🟢 Added input field for candidate’s career passport assetID */}
-              <div className="relative w-full mb-4 group">
-                <input
-                  type="text"
-                  placeholder="Enter Asset ID"
-                  className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                />
-                <div className="absolute left-0 -top-8 w-max bg-gray-200 text-gray-800 text-sm rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  Use Asset IDs 12345678 or 87654321 to test dummy candidates
-                </div>
-              </div>
-
+              <input
+                type="text"
+                placeholder="Enter or view Asset ID"
+                className="border border-gray-300 rounded-lg px-3 py-2 w-full mb-4"
+                value={assetIdInput}                        // 🟢 bind to state
+                onChange={(e) => setAssetIdInput(e.target.value)} // 🟢 update state when user types
+              />
+              
               <button
                 className="w-full py-2 rounded-lg text-[#1C2D5A] border border-[#1C2D5A] bg-white"
                 onClick={() => {
