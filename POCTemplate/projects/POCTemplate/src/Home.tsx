@@ -16,18 +16,20 @@ interface HomeProps {}
 const Home: React.FC<HomeProps> = () => {
   const [assetIdInput, setAssetIdInput] = useState('')   // 🟢 store the value of the assetID input
   const [selectedCandidate, setSelectedCandidate] = useState<any | null>(null) // 🟢 store the candidate to display
-  const employmentCredentials = selectedCandidate?.employment
-    ? [...selectedCandidate.employment].sort(
+  const employmentCredentials = selectedCandidate?.credentials?.employment
+    ? [...selectedCandidate.credentials.employment].sort(
         (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
       )
     : [];
 
-  const educationCredentials = selectedCandidate?.education
-    ? [...selectedCandidate.education].sort(
+  const educationCredentials = selectedCandidate?.credentials?.education
+    ? [...selectedCandidate.credentials.education].sort(
         (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
       )
     : [];
 
+    // Add this at the top of your component (inside Home)
+  const [activeMode, setActiveMode] = useState<'view' | 'add' | 'modify' | 'delete'>('view');
   const [openWalletModal, setOpenWalletModal] = useState(false)
   const [openPaymentModal, setOpenPaymentModal] = useState(false)
   const [openTokenModal, setOpenTokenModal] = useState(false)
@@ -223,13 +225,16 @@ const Home: React.FC<HomeProps> = () => {
               <p className="text-gray-600 mb-6">View or amend credential records.</p>
 
               {/* 🟢 Added input field for candidate’s career passport assetID */}
-              <input
-                type="text"
-                placeholder="Enter or view Asset ID"
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full mb-4"
-                value={assetIdInput}                        // 🟢 bind to state
-                onChange={(e) => setAssetIdInput(e.target.value)} // 🟢 update state when user types
-              />
+              <div className="relative w-full mb-4 group">
+                <input
+                  type="text"
+                  placeholder="Enter Asset ID"
+                  className="border border-gray-300 rounded-lg px-3 py-2 w-full"
+                />
+                <div className="absolute left-0 -top-8 w-max bg-gray-200 text-gray-800 text-sm rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  Use Asset IDs 12345678 or 87654321 to test dummy candidates
+                </div>
+              </div>
 
               <button
                 className="w-full py-2 rounded-lg text-[#1C2D5A] border border-[#1C2D5A] bg-white"
@@ -321,16 +326,74 @@ const Home: React.FC<HomeProps> = () => {
           <form method="dialog" className="modal-box w-full max-w-4xl">
             <h3 className="font-bold text-lg mb-4">Candidate Career Passport</h3>
 
-            {/* 🟢 Top button row with Save on right */}
-            <div className="flex flex-row justify-between items-center mb-6">
-              <div className="flex flex-row gap-4">
-                <button type="button" className="px-4 py-2 bg-[#1C2D5A] text-white rounded-lg">view all</button>
-                <button type="button" className="px-4 py-2 bg-[#1C2D5A] text-white rounded-lg">add record</button>
-                <button type="button" className="px-4 py-2 bg-[#1C2D5A] text-white rounded-lg">amend record</button>
-                <button type="button" className="px-4 py-2 bg-[#1C2D5A] text-white rounded-lg">delete record</button>
+            {/* 🟢 Top button row with Save, mode buttons, and candidate name */}
+            <div className="flex flex-row justify-between items-center gap-3 mb-6">
+              {/* Left: Candidate name */}
+              {selectedCandidate && (
+                <span className="text-gray-800 font-medium text-md pl-4">
+                  {selectedCandidate.name}
+                </span>
+              )}
+
+              {/* Right: Existing buttons */}
+              <div className="flex flex-row gap-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveMode('view')}
+                  className={`px-4 py-2 rounded-lg ${
+                    activeMode === 'view'
+                      ? 'bg-[#1C2D5A] text-white'
+                      : 'bg-white text-[#1C2D5A] border border-[#1C2D5A]'
+                  }`}
+                >
+                  View
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveMode('add')}
+                  className={`px-4 py-2 rounded-lg ${
+                    activeMode === 'add'
+                      ? 'bg-[#1C2D5A] text-white'
+                      : 'bg-white text-[#1C2D5A] border border-[#1C2D5A]'
+                  }`}
+                >
+                  Add
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveMode('modify')}
+                  className={`px-4 py-2 rounded-lg ${
+                    activeMode === 'modify'
+                      ? 'bg-[#1C2D5A] text-white'
+                      : 'bg-white text-[#1C2D5A] border border-[#1C2D5A]'
+                  }`}
+                >
+                  Modify
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveMode('delete')}
+                  className={`px-4 py-2 rounded-lg ${
+                    activeMode === 'delete'
+                      ? 'bg-[#1C2D5A] text-white'
+                      : 'bg-white text-[#1C2D5A] border border-[#1C2D5A]'
+                  }`}
+                >
+                  Delete
+                </button>
+
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-[#00C48C] text-white rounded-lg ml-2"
+                >
+                  Save
+                </button>
               </div>
-              <button type="button" className="px-4 py-2 bg-[#00C48C] text-white rounded-lg">Save</button>
             </div>
+
 
             {/* 🟢 Content frame */}
             <div className="border border-gray-300 rounded-lg p-4 h-96 overflow-auto bg-white">
@@ -338,11 +401,11 @@ const Home: React.FC<HomeProps> = () => {
               <h4 className="font-semibold mb-2">Employment Credentials</h4>
               {employmentCredentials.length > 0 ? (
                 employmentCredentials.map((cred, idx) => (
-                  <div key={idx} className="border-b border-gray-200 py-2">
-                    <div className="text-gray-800 font-medium">{cred.role}</div>
-                    <div className="text-gray-500 text-sm">
-                      {cred.company} • {cred.startDate} - {cred.endDate}
-                    </div>
+                  <div key={`emp-${idx}`} className="border-b border-gray-200 py-2 flex justify-between items-center text-sm text-gray-800">
+                    <span className="font-medium">{cred.role}</span>
+                    <span className="text-gray-500">
+                      {cred.company} • {cred.startDate} – {cred.endDate}
+                    </span>
                   </div>
                 ))
               ) : (
@@ -353,11 +416,11 @@ const Home: React.FC<HomeProps> = () => {
               <h4 className="font-semibold mt-4 mb-2">Education Credentials</h4>
               {educationCredentials.length > 0 ? (
                 educationCredentials.map((cred, idx) => (
-                  <div key={idx} className="border-b border-gray-200 py-2">
-                    <div className="text-gray-800 font-medium">{cred.degree}</div>
-                    <div className="text-gray-500 text-sm">
-                      {cred.institution} • {cred.startDate} - {cred.endDate}
-                    </div>
+                  <div key={`edu-${idx}`} className="border-b border-gray-200 py-2 flex justify-between items-center text-sm text-gray-800">
+                    <span className="font-medium">{cred.degree || cred.name}</span>
+                    <span className="text-gray-500">
+                      {cred.institution} • {cred.startDate} – {cred.endDate}
+                    </span>
                   </div>
                 ))
               ) : (
