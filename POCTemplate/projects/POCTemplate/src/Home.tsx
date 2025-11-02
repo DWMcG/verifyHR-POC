@@ -30,6 +30,30 @@ const Home: React.FC<HomeProps> = () => {
 
     // Add this at the top of your component (inside Home)
   const [activeMode, setActiveMode] = useState<'view' | 'add' | 'modify' | 'delete'>('view');
+  // Track the type of credential being added
+  const [newCredentialType, setNewCredentialType] = useState<'employment' | 'education'>('employment');
+
+  // Track new credential input
+  const [newCredential, setNewCredential] = useState<any>({
+    employeeName: '',
+    employeeId: '',
+    role: '',
+    company: '',
+    startDate: '',
+    endDate: '',
+    issueDate: '',
+    referenceId: '',
+    credentialProof: '',
+    notes: '',
+    image: '',
+    // Education fields
+    studentName: '',
+    studentId: '',
+    degree: '',
+    major: '',
+    institution: '',
+  });
+
   const [openWalletModal, setOpenWalletModal] = useState(false)
   const [openPaymentModal, setOpenPaymentModal] = useState(false)
   const [openTokenModal, setOpenTokenModal] = useState(false)
@@ -227,12 +251,12 @@ const Home: React.FC<HomeProps> = () => {
               {/* 🟢 Added input field for candidate’s career passport assetID */}
               <input
                 type="text"
-                placeholder="Enter or view Asset ID"
+                placeholder="Enter Asset ID"
                 className="border border-gray-300 rounded-lg px-3 py-2 w-full mb-4"
                 value={assetIdInput}                        // 🟢 bind to state
                 onChange={(e) => setAssetIdInput(e.target.value)} // 🟢 update state when user types
               />
-              
+
               <button
                 className="w-full py-2 rounded-lg text-[#1C2D5A] border border-[#1C2D5A] bg-white"
                 onClick={() => {
@@ -318,119 +342,398 @@ const Home: React.FC<HomeProps> = () => {
         </dialog>
       )}
 
-      {openCareerPassportModal && (
-        <dialog className="modal modal-open bg-slate-200">
-          <form method="dialog" className="modal-box w-full max-w-4xl">
-            <h3 className="font-bold text-lg mb-4">Candidate Career Passport</h3>
+        {openCareerPassportModal && (
+          <dialog className="modal modal-open bg-slate-200">
+            <form method="dialog" className="modal-box w-full max-w-4xl">
+              <h3 className="font-bold text-lg mb-4">Candidate Career Passport</h3>
 
-            {/* 🟢 Top button row with Save, mode buttons, and candidate name */}
-            <div className="flex flex-row justify-between items-center gap-3 mb-6">
-              {/* Left: Candidate name */}
-              {selectedCandidate && (
-                <span className="text-gray-800 font-medium text-md pl-4">
-                  {selectedCandidate.name}
-                </span>
+              {/* 🟢 Top button row with Save, mode buttons, and candidate name */}
+              <div className="flex flex-row justify-between items-center gap-3 mb-6">
+                {/* Left: Candidate name */}
+                {selectedCandidate && (
+                  <span className="text-gray-800 font-medium text-md pl-4">
+                    {selectedCandidate.name}
+                  </span>
+                )}
+
+                {/* Right: Existing buttons */}
+                <div className="flex flex-row gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveMode('view')}
+                    className={`px-4 py-2 rounded-lg ${
+                      activeMode === 'view'
+                        ? 'bg-[#1C2D5A] text-white'
+                        : 'bg-white text-[#1C2D5A] border border-[#1C2D5A]'
+                    }`}
+                  >
+                    View
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveMode('add');
+
+                      // Ensure toggle and form both reset to employment
+                      setNewCredentialType('employment');
+                      setNewCredential({
+                        credentialType: 'EmploymentCredential',
+                        employeeName: '',
+                        employeeId: '',
+                        role: '',
+                        company: '',
+                        startDate: '',
+                        endDate: '',
+                        issueDate: '',
+                        referenceId: '',
+                        credentialProof: '',
+                        notes: '',
+                        image: '',
+                        // Education fields
+                        studentName: '',
+                        studentId: '',
+                        degree: '',
+                        major: '',
+                        institution: '',
+                      });
+                    }}
+                    className={`px-4 py-2 rounded-lg ${
+                      activeMode === 'add'
+                        ? 'bg-[#1C2D5A] text-white'
+                        : 'bg-white text-[#1C2D5A] border border-[#1C2D5A]'
+                    }`}
+                  >
+                    Add
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveMode('modify')}
+                    className={`px-4 py-2 rounded-lg ${
+                      activeMode === 'modify'
+                        ? 'bg-[#1C2D5A] text-white'
+                        : 'bg-white text-[#1C2D5A] border border-[#1C2D5A]'
+                    }`}
+                  >
+                    Modify
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveMode('delete')}
+                    className={`px-4 py-2 rounded-lg ${
+                      activeMode === 'delete'
+                        ? 'bg-[#1C2D5A] text-white'
+                        : 'bg-white text-[#1C2D5A] border border-[#1C2D5A]'
+                    }`}
+                  >
+                    Delete
+                  </button>
+
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-[#00C48C] text-white rounded-lg ml-2"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+
+              {/* 🟢 Content frame */}
+            
+              {activeMode === 'view' && (
+                <div className="border border-gray-300 rounded-lg p-4 h-96 overflow-auto bg-white">
+                  {/* Employment Credentials */}
+                  <h4 className="font-semibold mb-2">Employment Credentials</h4>
+                  {employmentCredentials.length > 0 ? (
+                    employmentCredentials.map((cred, idx) => (
+                      <div key={`emp-${idx}`} className="border-b border-gray-200 py-2 flex justify-between items-center text-sm text-gray-800">
+                        <span className="font-medium">{cred.role}</span>
+                        <span className="text-gray-500">
+                          {cred.company} • {cred.startDate} – {cred.endDate}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center mb-4">No employment records found.</p>
+                  )}
+
+                  {/* Education Credentials */}
+                  <h4 className="font-semibold mt-4 mb-2">Education Credentials</h4>
+                  {educationCredentials.length > 0 ? (
+                    educationCredentials.map((cred, idx) => (
+                      <div key={`edu-${idx}`} className="border-b border-gray-200 py-2 flex justify-between items-center text-sm text-gray-800">
+                        <span className="font-medium">{cred.degree || cred.name}</span>
+                        <span className="text-gray-500">
+                          {cred.institution} • {cred.startDate} – {cred.endDate}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center">No education records found.</p>
+                  )}
+                </div>
               )}
 
-              {/* Right: Existing buttons */}
-              <div className="flex flex-row gap-2">
-                <button
-                  type="button"
-                  onClick={() => setActiveMode('view')}
-                  className={`px-4 py-2 rounded-lg ${
-                    activeMode === 'view'
-                      ? 'bg-[#1C2D5A] text-white'
-                      : 'bg-white text-[#1C2D5A] border border-[#1C2D5A]'
-                  }`}
-                >
-                  View
-                </button>
+              {activeMode === 'add' && (
+                <div className="mt-4 p-4 border border-gray-300 rounded-lg bg-white">
+                  {/* Credential type toggle */}
+                  <div className="mb-4 flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="credentialType"
+                        value="employment"
+                        checked={newCredential.credentialType === 'EmploymentCredential'}
+                        onChange={() =>
+                          setNewCredential({ ...newCredential, credentialType: 'EmploymentCredential' })
+                        }
+                      />
+                      Employment
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="credentialType"
+                        value="education"
+                        checked={newCredential.credentialType === 'EducationCredential'}
+                        onChange={() =>
+                          setNewCredential({ ...newCredential, credentialType: 'EducationCredential' })
+                        }
+                      />
+                      Education
+                    </label>
+                  </div>
 
-                <button
-                  type="button"
-                  onClick={() => setActiveMode('add')}
-                  className={`px-4 py-2 rounded-lg ${
-                    activeMode === 'add'
-                      ? 'bg-[#1C2D5A] text-white'
-                      : 'bg-white text-[#1C2D5A] border border-[#1C2D5A]'
-                  }`}
-                >
-                  Add
-                </button>
+                  {/* Full credential form */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {newCredential.credentialType === 'EmploymentCredential' ? (
+                      <>
+                        <input
+                          type="text"
+                          placeholder="Employee Name"
+                          value={newCredential.employeeName}
+                          onChange={(e) => setNewCredential({ ...newCredential, employeeName: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Employee ID"
+                          value={newCredential.employeeId}
+                          onChange={(e) => setNewCredential({ ...newCredential, employeeId: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Role"
+                          value={newCredential.role}
+                          onChange={(e) => setNewCredential({ ...newCredential, role: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Company"
+                          value={newCredential.company}
+                          onChange={(e) => setNewCredential({ ...newCredential, company: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="date"
+                          placeholder="Start Date"
+                          value={newCredential.startDate}
+                          onChange={(e) => setNewCredential({ ...newCredential, startDate: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="date"
+                          placeholder="End Date"
+                          value={newCredential.endDate}
+                          onChange={(e) => setNewCredential({ ...newCredential, endDate: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="date"
+                          placeholder="Issue Date"
+                          value={newCredential.issueDate}
+                          onChange={(e) => setNewCredential({ ...newCredential, issueDate: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Reference ID"
+                          value={newCredential.referenceId}
+                          onChange={(e) => setNewCredential({ ...newCredential, referenceId: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Credential Proof URL"
+                          value={newCredential.credentialProof}
+                          onChange={(e) => setNewCredential({ ...newCredential, credentialProof: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Notes"
+                          value={newCredential.notes}
+                          onChange={(e) => setNewCredential({ ...newCredential, notes: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Image URL"
+                          value={newCredential.image}
+                          onChange={(e) => setNewCredential({ ...newCredential, image: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <input
+                          type="text"
+                          placeholder="Student Name"
+                          value={newCredential.studentName}
+                          onChange={(e) => setNewCredential({ ...newCredential, studentName: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Student ID"
+                          value={newCredential.studentId}
+                          onChange={(e) => setNewCredential({ ...newCredential, studentId: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Degree"
+                          value={newCredential.degree}
+                          onChange={(e) => setNewCredential({ ...newCredential, degree: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Major"
+                          value={newCredential.major}
+                          onChange={(e) => setNewCredential({ ...newCredential, major: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Institution"
+                          value={newCredential.institution}
+                          onChange={(e) => setNewCredential({ ...newCredential, institution: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="date"
+                          placeholder="Start Date"
+                          value={newCredential.startDate}
+                          onChange={(e) => setNewCredential({ ...newCredential, startDate: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="date"
+                          placeholder="End Date"
+                          value={newCredential.endDate}
+                          onChange={(e) => setNewCredential({ ...newCredential, endDate: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="date"
+                          placeholder="Issue Date"
+                          value={newCredential.issueDate}
+                          onChange={(e) => setNewCredential({ ...newCredential, issueDate: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Reference ID"
+                          value={newCredential.referenceId}
+                          onChange={(e) => setNewCredential({ ...newCredential, referenceId: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Credential Proof URL"
+                          value={newCredential.credentialProof}
+                          onChange={(e) => setNewCredential({ ...newCredential, credentialProof: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Notes"
+                          value={newCredential.notes}
+                          onChange={(e) => setNewCredential({ ...newCredential, notes: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Image URL"
+                          value={newCredential.image}
+                          onChange={(e) => setNewCredential({ ...newCredential, image: e.target.value })}
+                          className="input input-bordered w-full"
+                        />
+                      </>
+                    )}
+                  </div>
 
-                <button
-                  type="button"
-                  onClick={() => setActiveMode('modify')}
-                  className={`px-4 py-2 rounded-lg ${
-                    activeMode === 'modify'
-                      ? 'bg-[#1C2D5A] text-white'
-                      : 'bg-white text-[#1C2D5A] border border-[#1C2D5A]'
-                  }`}
-                >
-                  Modify
-                </button>
+                  <button
+                    className="mt-4 px-4 py-2 bg-[#00C48C] text-white rounded-lg"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (selectedCandidate) {
+                        const updatedCandidate = { ...selectedCandidate };
+                        if (newCredential.credentialType === 'EmploymentCredential') {
+                          updatedCandidate.credentials.employment.push({ ...newCredential });
+                        } else {
+                          updatedCandidate.credentials.education.push({ ...newCredential });
+                        }
+                        setSelectedCandidate(updatedCandidate);
 
-                <button
-                  type="button"
-                  onClick={() => setActiveMode('delete')}
-                  className={`px-4 py-2 rounded-lg ${
-                    activeMode === 'delete'
-                      ? 'bg-[#1C2D5A] text-white'
-                      : 'bg-white text-[#1C2D5A] border border-[#1C2D5A]'
-                  }`}
-                >
-                  Delete
-                </button>
+                        // reset form
+                        setNewCredential({
+                          credentialType: 'EmploymentCredential',
+                          employeeName: '',
+                          employeeId: '',
+                          role: '',
+                          company: '',
+                          startDate: '',
+                          endDate: '',
+                          issueDate: '',
+                          referenceId: '',
+                          credentialProof: '',
+                          notes: '',
+                          image: '',
+                          degree: '',
+                          major: '',
+                          studentName: '',
+                          studentId: '',
+                          institution: '',
+                        });
+                      }
+                    }}
+                  >
+                    Add Credential
+                  </button>
+                </div>
+              )}
 
+              <div className="modal-action mt-4">
                 <button
-                  type="button"
-                  className="px-4 py-2 bg-[#00C48C] text-white rounded-lg ml-2"
+                  className="btn"
+                  onClick={() => {
+                    setOpenCareerPassportModal(false);
+                    setActiveMode('view'); // 🟢 Reset to view mode when closing
+                  }}
                 >
-                  Save
+                  Close
                 </button>
               </div>
-            </div>
 
-
-            {/* 🟢 Content frame */}
-            <div className="border border-gray-300 rounded-lg p-4 h-96 overflow-auto bg-white">
-              {/* Employment Credentials */}
-              <h4 className="font-semibold mb-2">Employment Credentials</h4>
-              {employmentCredentials.length > 0 ? (
-                employmentCredentials.map((cred, idx) => (
-                  <div key={`emp-${idx}`} className="border-b border-gray-200 py-2 flex justify-between items-center text-sm text-gray-800">
-                    <span className="font-medium">{cred.role}</span>
-                    <span className="text-gray-500">
-                      {cred.company} • {cred.startDate} – {cred.endDate}
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500 text-center mb-4">No employment records found.</p>
-              )}
-
-              {/* Education Credentials */}
-              <h4 className="font-semibold mt-4 mb-2">Education Credentials</h4>
-              {educationCredentials.length > 0 ? (
-                educationCredentials.map((cred, idx) => (
-                  <div key={`edu-${idx}`} className="border-b border-gray-200 py-2 flex justify-between items-center text-sm text-gray-800">
-                    <span className="font-medium">{cred.degree || cred.name}</span>
-                    <span className="text-gray-500">
-                      {cred.institution} • {cred.startDate} – {cred.endDate}
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500 text-center">No education records found.</p>
-              )}
-            </div>
-
-            <div className="modal-action mt-4">
-              <button className="btn" onClick={() => setOpenCareerPassportModal(false)}>Close</button>
-            </div>
-          </form>
-        </dialog>
-      )}
+            </form>
+          </dialog>
+        )}
 
     </div>
   )
