@@ -1,0 +1,195 @@
+[
+  {
+    "assetId": 12345678,
+    "name": "John Smith",
+    "credentials": {
+      "education": [
+        {
+          "name": "vHR Education Credential",
+          "issuer": "Tech University",
+          "credentialType": "EducationCredential",
+          "studentName": "John Smith",
+          "studentId": "STU987654",
+          "degree": "Bachelor of Science",
+          "major": "Computer Science",
+          "institution": "Tech University",
+          "startDate": "2019-09-01",
+          "endDate": "2023-06-30",
+          "issueDate": "2023-07-15",
+          "referenceId": "EDU12345",
+          "credentialProof": "https://example.com/proofs/STU987654.pdf",
+          "notes": "Credential verified by Registrar's Office.",
+          "version": "1.0",
+          "image": "ipfs://bafkreibri6mh6xjqks54vlkdsuya6j7gb3nfexqkuu3upognux3cyir33y"
+        }
+      ],
+      "employment": [
+        {
+          "name": "VerifyHR Employment Credential",
+          "issuer": "Tech Solutions Ltd.",
+          "credentialType": "EmploymentCredential",
+          "employeeName": "John Smith",
+          "employeeId": "EMP123456",
+          "role": "Software Engineer",
+          "startDate": "2023-01-15",
+          "endDate": "2025-01-14",
+          "issueDate": "2023-01-10",
+          "company": "Tech Solutions Ltd.",
+          "referenceId": "REF7890",
+          "credentialProof": "https://example.com/proofs/EMP123456.pdf",
+          "notes": "Credential verified by HR department.",
+          "version": "1.0",
+          "image": "ipfs://bafkreidxyd3qhmwr4f2u5qzsp32vgr6htiwheiwzr5je4wxu2mhnwak6vu"
+        },
+        {
+          "name": "VerifyHR Employment Credential",
+          "issuer": "Innovatech Labs",
+          "credentialType": "EmploymentCredential",
+          "employeeName": "John Smith",
+          "employeeId": "EMP789012",
+          "role": "Junior Developer",
+          "startDate": "2021-01-01",
+          "endDate": "2022-12-31",
+          "issueDate": "2023-01-02",
+          "company": "Innovatech Labs",
+          "referenceId": "REF4567",
+          "credentialProof": "https://example.com/proofs/EMP789012.pdf",
+          "notes": "Credential verified by HR department.",
+          "version": "1.0",
+          "image": "ipfs://bafkreidxyd3qhmwr4f2u5qzsp32vgr6htiwheiwzr5je4wxu2mhnwak6vu"
+        },
+        {
+          "name": "VerifyHR Employment Credential",
+          "issuer": "Tech Solutions Ltd.",
+          "credentialType": "EmploymentCredential",
+          "employeeName": "John Smith",
+          "employeeId": "INT452376",
+          "role": "Intern Developer",
+          "startDate": "2020-05-01",
+          "endDate": "2020-08-31",
+          "issueDate": "2020-09-01",
+          "company": "Tech Solutions Ltd.",
+          "referenceId": "REF1239",
+          "credentialProof": "https://example.com/proofs/EMP999999.pdf",
+          "notes": "Internship verified by HR department.",
+          "version": "1.0",
+          "image": "ipfs://bafkreidxyd3qhmwr4f2u5qzsp32vgr6htiwheiwzr5je4wxu2mhnwak6vu"
+        }
+      ]
+    }
+  },
+  {
+    "assetId": 87654321,
+    "name": "Alice Johnson",
+    "credentials": {
+      "education": [
+        {
+          "name": "vHR Education Credential",
+          "issuer": "Metro Business College",
+          "credentialType": "EducationCredential",
+          "studentName": "Alice Johnson",
+          "studentId": "STU123987",
+          "degree": "Master of Business Administration",
+          "major": "Management",
+          "institution": "Metro Business College",
+          "startDate": "2018-09-01",
+          "endDate": "2020-06-30",
+          "issueDate": "2020-07-10",
+          "referenceId": "EDU98765",
+          "credentialProof": "https://example.com/proofs/STU123987.pdf",
+          "notes": "Credential verified by Registrar's Office.",
+          "version": "1.0",
+          "image": "ipfs://bafkreibri6mh6xjqks54vlkdsuya6j7gb3nfexqkuu3upognux3cyir33y"
+        },
+        {
+          "name": "vHR Education Credential",
+          "issuer": "Canadian Red Cross",
+          "credentialType": "EducationCredential",
+          "studentName": "Alice Johnson",
+          "studentId": "STU456321",
+          "degree": "First Aid Certification",
+          "major": "Emergency Response",
+          "institution": "Canadian Red Cross",
+          "startDate": "2024-03-01",
+          "endDate": "2024-03-31",
+          "issueDate": "2024-04-01",
+          "referenceId": "EDU11111",
+          "credentialProof": "https://example.com/proofs/STU456321.pdf",
+          "notes": "Certification verified by Instructor.",
+          "version": "1.0",
+          "image": "ipfs://bafkreibri6mh6xjqks54vlkdsuya6j7gb3nfexqkuu3upognux3cyir33y"
+        }
+      ],
+      "employment": [
+        {
+          "name": "VerifyHR Employment Credential",
+          "issuer": "Bright Innovations Inc.",
+          "credentialType": "EmploymentCredential",
+          "employeeName": "Alice Johnson",
+          "employeeId": "EMP555001",
+          "role": "Marketing Specialist",
+          "startDate": "2021-02-01",
+          "endDate": "2023-02-01",
+          "issueDate": "2023-02-05",
+          "company": "Bright Innovations Inc.",
+          "referenceId": "REF2001",
+          "credentialProof": "https://example.com/proofs/EMP555001.pdf",
+          "notes": "Credential verified by HR department.",
+          "version": "1.0",
+          "image": "ipfs://bafkreidxyd3qhmwr4f2u5qzsp32vgr6htiwheiwzr5je4wxu2mhnwak6vu"
+        },
+        {
+          "name": "VerifyHR Employment Credential",
+          "issuer": "Bright Innovations Inc.",
+          "credentialType": "EmploymentCredential",
+          "employeeName": "Alice Johnson",
+          "employeeId": "EMP555002",
+          "role": "Senior Marketing Manager",
+          "startDate": "2023-03-01",
+          "endDate": "2025-02-28",
+          "issueDate": "2023-03-05",
+          "company": "Bright Innovations Inc.",
+          "referenceId": "REF2002",
+          "credentialProof": "https://example.com/proofs/EMP555002.pdf",
+          "notes": "Credential verified by HR department.",
+          "version": "1.0",
+          "image": "ipfs://bafkreidxyd3qhmwr4f2u5qzsp32vgr6htiwheiwzr5je4wxu2mhnwak6vu"
+        },
+        {
+          "name": "VerifyHR Employment Credential",
+          "issuer": "Blue Horizon Media",
+          "credentialType": "EmploymentCredential",
+          "employeeName": "Alice Johnson",
+          "employeeId": "EMP555003",
+          "role": "Marketing Intern",
+          "startDate": "2019-05-01",
+          "endDate": "2019-08-31",
+          "issueDate": "2019-09-05",
+          "company": "Blue Horizon Media",
+          "referenceId": "REF2003",
+          "credentialProof": "https://example.com/proofs/EMP555003.pdf",
+          "notes": "Internship verified by HR department.",
+          "version": "1.0",
+          "image": "ipfs://bafkreidxyd3qhmwr4f2u5qzsp32vgr6htiwheiwzr5je4wxu2mhnwak6vu"
+        },
+        {
+          "name": "VerifyHR Employment Credential",
+          "issuer": "Blue Horizon Media",
+          "credentialType": "EmploymentCredential",
+          "employeeName": "Alice Johnson",
+          "employeeId": "EMP555004",
+          "role": "Content Strategist",
+          "startDate": "2020-01-10",
+          "endDate": "2021-01-30",
+          "issueDate": "2021-02-01",
+          "company": "Blue Horizon Media",
+          "referenceId": "REF2004",
+          "credentialProof": "https://example.com/proofs/EMP555004.pdf",
+          "notes": "Credential verified by HR department.",
+          "version": "1.0",
+          "image": "ipfs://bafkreidxyd3qhmwr4f2u5qzsp32vgr6htiwheiwzr5je4wxu2mhnwak6vu"
+        }
+      ]
+    }
+  }
+]

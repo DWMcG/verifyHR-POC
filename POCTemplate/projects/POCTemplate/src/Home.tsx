@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useWallet } from '@txnlab/use-wallet-react'
 import { useSnackbar } from 'notistack'
 import ConnectWallet from './components/ConnectWallet'
@@ -9,13 +9,13 @@ import EmploymentForm from './components/credentials/EmploymentForm'
 import EducationForm from './components/credentials/EducationForm'
 import VerifyNFT from './components/VerifyNFT'
 import VerifyIDManager from './components/VerifyIDManager'
-import { dummyCandidates } from './data/dummyCandidates'
 
 interface HomeProps {}
 
 const Home: React.FC<HomeProps> = () => {
   const [assetIdInput, setAssetIdInput] = useState('')   // 🟢 store the value of the assetID input
   const [selectedCandidate, setSelectedCandidate] = useState<any | null>(null) // 🟢 store the candidate to display
+  const [candidates, setCandidates] = useState<any[]>([]);
   const employmentCredentials = selectedCandidate?.credentials?.employment
     ? [...selectedCandidate.credentials.employment].sort(
         (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
@@ -65,6 +65,13 @@ const Home: React.FC<HomeProps> = () => {
   const [generatedCredential, setGeneratedCredential] = useState<any | null>(null)
   const { activeAddress, transactionSigner } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
+
+  useEffect(() => {
+    fetch('/dummyCandidates.json')
+      .then((res) => res.json())
+      .then((data) => setCandidates(data))
+      .catch((err) => console.error('Failed to load candidate data', err));
+  }, []);
 
   const handleEmploymentCredential = async (credential: any) => {
     setOpenEmploymentModal(false)
@@ -260,7 +267,7 @@ const Home: React.FC<HomeProps> = () => {
               <button
                 className="w-full py-2 rounded-lg text-[#1C2D5A] border border-[#1C2D5A] bg-white"
                 onClick={() => {
-                  const candidate = dummyCandidates.find(
+                  const candidate = candidates.find(
                     (c) => c.assetId === Number(assetIdInput.trim())
                   )
 
