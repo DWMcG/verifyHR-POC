@@ -13,7 +13,7 @@ import VerifyIDManager from './components/VerifyIDManager'
 interface HomeProps {}
 
 const Home: React.FC<HomeProps> = () => {
-  const [assetIdInput, setAssetIdInput] = useState('')   // 🟢 store the value of the assetID input
+  const [assetIdInput, setAssetIdInput] = useState('');   // 🟢 store the value of the assetID input
   const [selectedCandidate, setSelectedCandidate] = useState<any | null>(null) // 🟢 store the candidate to display
   const [candidates, setCandidates] = useState<any[]>([]);
   const employmentCredentials = selectedCandidate?.credentials?.employment
@@ -224,7 +224,7 @@ const Home: React.FC<HomeProps> = () => {
 
         {activeAddress && (
           <div className="flex flex-row flex-wrap justify-center gap-4 w-full">
-            {/* VERIFYID MANAGER CARD */}
+            {/* verifyID MANAGER CARD */}
             <div className="bg-white shadow-xl rounded-2xl p-8 text-center w-full sm:w-96 border border-gray-200 mb-4">
               <h2 className="text-xl font-semibold text-[#1C2D5A]">verifyID manager</h2>
               <p className="text-gray-600 mb-6">Create or confirm a unique verifyID (VID).</p>
@@ -339,13 +339,16 @@ const Home: React.FC<HomeProps> = () => {
 
       {openVIDModal && (
         <dialog className="modal modal-open bg-slate-200">
-          <form method="dialog" className="modal-box w-full max-w-md">
-            <h3 className="font-bold text-lg mb-2">VerifyID Manager</h3>
-            <VerifyIDManager closeModal={() => setOpenVIDModal(false)} />
+          <div className="modal-box w-full max-w-md">
+            <h3 className="font-bold text-lg mb-2">verifyID manager</h3>
+            <VerifyIDManager 
+              closeModal={() => setOpenVIDModal(false)}
+              onASACreated={(asaId) => setAssetIdInput(asaId)} // 🟢 populate Home input
+            />
             <div className="modal-action">
               <button className="btn" onClick={() => setOpenVIDModal(false)}>Close</button>
             </div>
-          </form>
+          </div>
         </dialog>
       )}
 

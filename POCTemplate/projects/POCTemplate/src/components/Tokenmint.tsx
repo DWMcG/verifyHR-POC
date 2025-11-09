@@ -11,9 +11,9 @@ interface TokenMintProps {
 }
 
 const Tokenmint = ({ openModal, setModalState }: TokenMintProps) => {
-  const [assetName, setAssetName] = useState<string>('MasterPass Token')
-  const [unitName, setUnitName] = useState<string>('MPT')
-  const [total, setTotal] = useState<string>('1000') // human-readable total (before decimals)
+  const [assetName, setAssetName] = useState<string>('vHR career passport')
+  const [unitName, setUnitName] = useState<string>('vHR')
+  const [total, setTotal] = useState<string>('1') // human-readable total (before decimals)
   const [decimals, setDecimals] = useState<string>('0') // beginner-friendly default
 
   const [loading, setLoading] = useState<boolean>(false)
@@ -46,7 +46,7 @@ const Tokenmint = ({ openModal, setModalState }: TokenMintProps) => {
 
     try {
       setLoading(true)
-      enqueueSnackbar('Creating token...', { variant: 'info' })
+      enqueueSnackbar('Creating vHR token...', { variant: 'info' })
 
       const totalBig = BigInt(total)
       const decimalsBig = BigInt(decimals)
@@ -62,15 +62,17 @@ const Tokenmint = ({ openModal, setModalState }: TokenMintProps) => {
         assetName,
         unitName,
         defaultFrozen: false,
+        manager: activeAddress, // you control updates
+        reserve: activeAddress,
+        freeze: activeAddress,
+        clawback: activeAddress, // placeholder – later replaced with the ASC1 contract
       })
 
       enqueueSnackbar(`✅ Token Created! ASA ID: ${createResult.assetId}`, { variant: 'success' })
+        console.log('Created ASA ID:', createResult.assetId)
+        localStorage.setItem('lastCreatedASA', String(createResult.assetId))
+        enqueueSnackbar(`✅ vHR created! ASA ID: ${createResult.assetId}`, { variant: 'success' })
 
-      // Reset form
-      setAssetName('MasterPass Token')
-      setUnitName('MPT')
-      setTotal('1000')
-      setDecimals('0')
     } catch (error) {
       console.error(error)
       enqueueSnackbar('Failed to create token', { variant: 'error' })
@@ -82,9 +84,9 @@ const Tokenmint = ({ openModal, setModalState }: TokenMintProps) => {
   return (
     <dialog id="token_modal" className={`modal ${openModal ? 'modal-open' : ''} bg-slate-200`}>
       <form method="dialog" className="modal-box">
-        <h3 className="font-bold text-lg">Create a MasterPass Token (ASA)</h3>
+        <h3 className="font-bold text-lg">Create a vHR career passport</h3>
         <p className="text-sm text-gray-600 mb-4">
-          This creates a standard fungible token on Algorand (testnet). No IPFS needed.
+          This creates a unique on-chain Career Passport (ASA) called vHR on Algorand Testnet.
         </p>
 
         <div className="grid grid-cols-1 gap-3">
