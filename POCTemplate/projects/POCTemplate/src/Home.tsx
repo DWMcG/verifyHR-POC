@@ -9,6 +9,13 @@ import EmploymentForm from './components/credentials/EmploymentForm'
 import EducationForm from './components/credentials/EducationForm'
 import VerifyNFT from './components/VerifyNFT'
 import VerifyIDManager from './components/VerifyIDManager'
+import { AlgorandClient } from "@algorandfoundation/algokit-utils";
+import { getAlgodConfigFromViteEnvironment } from "./utils/network/getAlgoClientConfigs";
+
+interface CandidateType {
+  assetId: number;
+  fullName: string;
+}
 
 interface HomeProps {}
 
@@ -16,6 +23,7 @@ const Home: React.FC<HomeProps> = () => {
   const [assetIdInput, setAssetIdInput] = useState('');   // 🟢 store the value of the assetID input
   const [selectedCandidate, setSelectedCandidate] = useState<any | null>(null) // 🟢 store the candidate to display
   const [candidates, setCandidates] = useState<any[]>([]);
+  const [newCandidates, setNewCandidates] = useState<CandidateType[]>([]);
   const employmentCredentials = selectedCandidate?.credentials?.employment
     ? [...selectedCandidate.credentials.employment].sort(
         (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
@@ -266,18 +274,49 @@ const Home: React.FC<HomeProps> = () => {
 
               <button
                 className="w-full py-2 rounded-lg text-[#1C2D5A] border border-[#1C2D5A] bg-white"
-                onClick={() => {
-                  const candidate = candidates.find(
-                    (c) => c.assetId === Number(assetIdInput.trim())
-                  )
+                onClick={async () => {
+                  const assetIdNumber = Number(assetIdInput.trim());
+                  if (!assetIdNumber) {
+                    alert('Please enter a valid Asset ID.');
+                    return;
+                  }
+
+                  // 1️⃣ Check dummyCandidates.json first
+                  let candidate = candidates.find((c) => c.assetId === assetIdNumber);
 
                   if (candidate) {
-                    setSelectedCandidate(candidate)
-                    setOpenCareerPassportModal(true)
-                  } else {
-                    alert('Please enter a valid Asset ID for an existing candidate.')
+                    setSelectedCandidate(candidate);
+                    setOpenCareerPassportModal(true);
+                    return;
+                  }
+
+                  // 2️⃣ If not found, check on-chain
+                  try {
+                    const algodConfig = getAlgodConfigFromViteEnvironment();
+                    const algorand = AlgorandClient.fromConfig({ algodConfig });
+
+                    const algod = algorand.client.algod;
+                    const asaInfo = await algod.getAssetByID(assetIdNumber).do();
+
+                    if (asaInfo && asaInfo.params.name === 'vHR' && asaInfo.params.unitName === 'verifyCP') {
+                      const onChainCandidate = {
+                        assetId: assetIdNumber,
+                        fullName: 'On-chain Candidate',
+                        credentials: { employment: [], education: [] },
+                        onChain: true,
+                      };
+                      setSelectedCandidate(onChainCandidate);
+                      setOpenCareerPassportModal(true);
+                    } else {
+                      alert('No candidate found with this Asset ID or it is not a valid career passport ASA.');
+                    }
+
+                  } catch (err) {
+                    console.error('Error fetching on-chain ASA:', err);
+                    alert('Failed to fetch on-chain career passport. Check console for details.');
                   }
                 }}
+
               >
                 access career passport
               </button>
@@ -343,8 +382,17 @@ const Home: React.FC<HomeProps> = () => {
             <h3 className="font-bold text-lg mb-2">verifyID manager</h3>
             <VerifyIDManager 
               closeModal={() => setOpenVIDModal(false)}
-              onASACreated={(asaId) => setAssetIdInput(asaId)} // 🟢 populate Home input
+              onASACreated={(asaId) => {
+                setAssetIdInput(asaId);
+
+                // Add newly created ASA to in-memory list
+                setNewCandidates(prev => [
+                  ...prev, 
+                  { assetId: Number(asaId), fullName: "New Candidate" } // adjust fullName if you want real name
+                ]);
+              }}
             />
+
             <div className="modal-action">
               <button className="btn" onClick={() => setOpenVIDModal(false)}>Close</button>
             </div>
