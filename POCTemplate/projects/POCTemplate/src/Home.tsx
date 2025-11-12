@@ -9,8 +9,9 @@ import EmploymentForm from './components/credentials/EmploymentForm'
 import EducationForm from './components/credentials/EducationForm'
 import VerifyNFT from './components/VerifyNFT'
 import VerifyIDManager from './components/VerifyIDManager'
-import { AlgorandClient } from "@algorandfoundation/algokit-utils";
-import { getAlgodConfigFromViteEnvironment } from "./utils/network/getAlgoClientConfigs";
+import { AlgorandClient } from "@algorandfoundation/algokit-utils"
+import { getAlgodConfigFromViteEnvironment } from "./utils/network/getAlgoClientConfigs"
+import algosdk, { Algodv2 } from "algosdk";
 
 interface CandidateType {
   assetId: number;
@@ -738,18 +739,46 @@ const Home: React.FC<HomeProps> = () => {
 
                   <button
                     className="mt-4 px-4 py-2 bg-[#00C48C] text-white rounded-lg"
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.preventDefault();
-                      if (selectedCandidate) {
-                        const updatedCandidate = { ...selectedCandidate };
-                        if (newCredential.credentialType === 'EmploymentCredential') {
-                          updatedCandidate.credentials.employment.push({ ...newCredential });
-                        } else {
-                          updatedCandidate.credentials.education.push({ ...newCredential });
-                        }
-                        setSelectedCandidate(updatedCandidate);
+                      if (!selectedCandidate) return;
 
-                        // reset form
+                      try {
+                        // 1️⃣ Pick the correct JSON template
+                        const employmentCredentialUrl = "https://gateway.pinata.cloud/ipfs/bafkreic6pt32t65257cq5o5oa2y3xtsnlnksjroh7casslkky7i5ehv2lq";
+                        const educationCredentialUrl = "https://gateway.pinata.cloud/ipfs/bafkreicwt3ummeg7o5duyep7mvunisgdodmcodsk5adac4xv5op2xwgtga";
+                        const credentialUrl = newCredential.credentialType === "EmploymentCredential"
+                            ? employmentCredentialUrl
+                            : educationCredentialUrl;
+
+                        // 2️⃣ Instantiate Algorand client
+                        const algodClient = new Algodv2(
+                          import.meta.env.VITE_ALGOD_TOKEN,
+                          import.meta.env.VITE_ALGOD_SERVER,
+                          import.meta.env.VITE_ALGOD_PORT
+                        );
+
+                        // 3️⃣ Prepare and send transaction via wallet
+                        const suggestedParams = await algodClient.getTransactionParams().do();
+
+                        const txn = algosdk.makeApplicationNoOpTxnFromObject({
+                          from: activeAddress,
+                          appIndex: selectedCandidate.asaAppId,
+                          appArgs: [
+                            new Uint8Array(Buffer.from("addCredential")),
+                            new Uint8Array(Buffer.from(credentialUrl)),
+                            new Uint8Array(Buffer.from(newCredential.credentialType)),
+                          ],
+                          suggestedParams,
+                        });
+
+                        const encodedTxn = algosdk.encodeUnsignedTransaction(txn);
+                        const signedTxns = await signTransactions([encodedTxn]);
+                        const { txId } = await sendTransactions(signedTxns, 4); // waits up to 4 rounds
+
+                        enqueueSnackbar("✅ Credential added on-chain! TxID: " + txId, { variant: "success" });
+
+                        // 5️⃣ Reset form
                         setNewCredential({
                           credentialType: 'EmploymentCredential',
                           employeeName: '',
@@ -769,6 +798,10 @@ const Home: React.FC<HomeProps> = () => {
                           studentId: '',
                           institution: '',
                         });
+
+                      } catch (err) {
+                        console.error(err);
+                        enqueueSnackbar("❌ Failed to add credential on-chain", { variant: "error" });
                       }
                     }}
                   >
